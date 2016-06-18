@@ -43,7 +43,7 @@ var user = d3.select('svg')
   .attr('r', userRadius)
   .attr('cx', function(d) { return d.x; })
   .attr('cy', function(d) { return d.y; })
-  .attr('fill', 'white')
+  .attr('fill', 'blue')
   .classed('user', true);
 
 var drag = d3.behavior.drag()
