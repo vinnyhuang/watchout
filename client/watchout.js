@@ -12,8 +12,6 @@ var collisionCount = 0;
 var highScore = 0;
 var currentScore = 0;
 
- 
-
 
 var svg = d3.select('.board').append('svg')
   .attr('width', boardWidth)
@@ -50,6 +48,17 @@ var drag = d3.behavior.drag()
   .on('drag', function(d, i) {
     d.x += d3.event.dx;
     d.y += d3.event.dy;
+    if (d.x < userRadius) {
+      d.x = userRadius;
+    } else if (d.x > boardWidth - userRadius) {
+      d.x = boardWidth - userRadius;
+    }
+    if (d.y < userRadius) {
+      d.y = userRadius;
+    } else if (d.y > boardHeight - userRadius) {
+      d.y = boardHeight - userRadius;
+    }
+
     d3.select(this).attr('cx', d.x)
     .attr('cy', d.y);
   });
@@ -69,16 +78,13 @@ var update = function() {
   // creating the updateSelection
   var enemies = d3.select('g').selectAll('.enemy').data(enemyData);
 
-  /*rotation += 60;
-  strRot = 'rotate(' + rotation + 'deg)'; */
-
   // update enemy positions
-  enemies//.style('-webkit-transform-origin', function() { return d.x + ' ' + d.y; })
-    .transition()
+  enemies.transition()
     .duration(1000)
     .attr('cx', function(d) { return d.x; })
     .attr('cy', function(d) { return d.y; });
-    //.style('-webkit-transform', strRot);
+  // In order to rotate, use transform: translate + rotate.
+
 
   // adding enemies at location
   enemies.enter()
@@ -127,10 +133,6 @@ var checkCollision = function() {
     //pythagorean theorem to find distance
 
     if (dist < enemyRadius + userRadius) {
-      //reset score
-      //check high score
-      // add collision count
-      //console.log('you lose');
       hasCollision = true;
     }
   }
@@ -149,25 +151,20 @@ var checkCollision = function() {
       .text(currentScore);
     d3.select('.collisions').select('span')
       .text(collisionCount);
+    d3.select('.board')
+      .style('background-color', 'red');
   } else if (!hasCollision && collision) {
     collision = false;
+    d3.select('.board')
+      .style('background-color', '#FBEC5D');
   }
-
-  //window.requestAnimationFrame(checkCollision);
-
-// [0][0].cx.animVal.value
-
 };
 
-//window.requestAnimationFrame(checkCollision);
 setInterval(checkCollision, 30);
-// for every time interval
-  // get coordinates of user
-  // get coordinates of every enemy
-  // if the circles overlap
-  // collision
-    // reset score and check high score
-    // collision count goes up
 
-// window.requestAnimationFrame()
-// updating score data
+/*setInterval(function() {
+  d3.select('svg').selectAll('.enemy')
+    .style('transform-origin', function(d) {
+      return '' + this.cx.animVal.value + ' ' + this.cy.animVal.value;
+    });
+}, 200);*/
